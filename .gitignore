@@ -41,6 +41,6 @@ build/
 
 # Default ignored files
 /shelf/
-AirTortilla/.idea/workspace.xml
+AirTortilla/.idea/
 # Editor-based HTTP Client requests
 /httpRequests/

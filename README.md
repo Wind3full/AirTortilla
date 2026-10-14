@@ -1,12 +1,14 @@
 # AirTortilla - Gestión de reservas
 
-## 1. Descripción del proyecto
+## 1. Descripción del proyecto y diagrama
 
 AirTortilla es una aplicación desarrollada en Java que permite gestionar reservas de pasajeros mediante ficheros CSV.
 
 El objetivo principal es leer un fichero con las reservas y distribuirlas en diferentes archivos según el país de destino y la fecha en la que se realizó cada reserva.
 
 La aplicación funciona por terminal y permite consultar las reservas, generar todos los archivos de salida de una vez o procesarlas individualmente, confirmando cada reserva mediante la tecla Enter.
+
+![alt text](image.png)
 
 ## 2. Tecnologías utilizadas
 

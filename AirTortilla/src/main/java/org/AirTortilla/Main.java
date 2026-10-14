@@ -62,7 +62,7 @@ public class Main {
                                 gestor.generarTodosLosFicheros();
 
                         case 4 ->
-                                gestor.generarLineaALinea();
+                                gestor.generarLineaALinea(teclado);
 
                         case 5 ->
                                 System.out.println(

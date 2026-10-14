@@ -13,6 +13,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
+import java.nio.file.StandardOpenOption;
+import java.text.Normalizer;
+import java.util.Locale;
 
 public class GestorReservas {
 
@@ -21,6 +25,10 @@ public class GestorReservas {
     private final Path carpetaSalida = Paths.get("..","salida");
 
     private final DateTimeFormatter formatoFecha = DateTimeFormatter.ISO_LOCAL_DATE;
+
+    private final Path archivoPaises = Paths.get("..", "res", "Paises.csv");
+
+    private Map<String, String> paises;
 
     public List<Reserva> leerReservas() throws IOException {
         List<Reserva> reservas = new ArrayList<>();
@@ -140,7 +148,8 @@ public class GestorReservas {
                         + grupos.size());
     }
 
-    public void generarLineaALinea() throws IOException {
+    public void generarLineaALinea(Scanner teclado) throws IOException {
+
         prepararCarpetaSalida();
 
         int procesadas = 0;
@@ -154,6 +163,7 @@ public class GestorReservas {
             while ((linea = lector.readLine()) != null) {
                 numeroLinea++;
 
+                // Saltar cabecera y líneas vacías
                 if (numeroLinea == 1 || linea.isBlank()) {
                     continue;
                 }
@@ -168,11 +178,23 @@ public class GestorReservas {
                                     + ": " + e.getMessage(), e);
                 }
 
+                // Mostrar la reserva antes de guardarla
+                System.out.println("\n================================");
+                System.out.println("RESERVA " + (procesadas + 1));
+                System.out.println("================================");
+                System.out.println(reserva);
+
+                System.out.println(
+                        "\nPulsa ENTER para guardar esta reserva...");
+                teclado.nextLine();
+
+                // Obtener el fichero correspondiente
                 Path archivo = carpetaSalida.resolve(
                         obtenerNombreArchivo(reserva));
 
                 boolean existe = Files.exists(archivo);
 
+                // Guardar la reserva después de pulsar ENTER
                 try (BufferedWriter escritor = Files.newBufferedWriter(
                         archivo,
                         StandardCharsets.UTF_8,
@@ -187,15 +209,17 @@ public class GestorReservas {
                 }
 
                 procesadas++;
+
+                System.out.println("Reserva guardada correctamente.");
             }
         }
 
-        System.out.println(
-                "Procesamiento línea a línea finalizado. Reservas: "
-                        + procesadas);
+        System.out.println("\nSe han procesado " + procesadas
+                + " reservas.");
+        System.out.println("Proceso finalizado.");
     }
 
-    private String obtenerNombreArchivo(Reserva reserva) {
+    private String obtenerNombreArchivo(Reserva reserva) throws IOException{
         String codigo = obtenerCodigoPais(reserva.getDestino());
 
         LocalDate fecha = LocalDate.parse(
@@ -209,17 +233,80 @@ public class GestorReservas {
                 fecha.getDayOfMonth());
     }
 
-    private String obtenerCodigoPais(String destino) {
-        return switch (destino.trim().toLowerCase()) {
-            case "españa", "espana" -> "ES";
-            case "francia" -> "FR";
-            case "italia" -> "IT";
-            case "portugal" -> "PT";
-            case "alemania" -> "DE";
-            default -> throw new IllegalArgumentException(
-                    "No existe un código configurado para el destino: "
+    private String obtenerCodigoPais(String destino)
+            throws IOException {
+
+        // Cargar los países solamente la primera vez.
+        if (paises == null) {
+            paises = cargarPaises();
+        }
+
+        String nombreNormalizado = normalizar(destino);
+        String codigo = paises.get(nombreNormalizado);
+
+        if (codigo == null) {
+            throw new IllegalArgumentException(
+                    "No existe un código ISO para el destino: "
                             + destino);
-        };
+        }
+
+        return codigo;
+    }
+
+    private Map<String, String> cargarPaises() throws IOException {
+
+        Map<String, String> mapa = new HashMap<>();
+
+        try (BufferedReader lector = Files.newBufferedReader(
+                archivoPaises, StandardCharsets.UTF_8)) {
+
+            String linea;
+            int numeroLinea = 0;
+
+            while ((linea = lector.readLine()) != null) {
+                numeroLinea++;
+
+                // Saltar la cabecera y las líneas vacías.
+                if (numeroLinea == 1 || linea.isBlank()) {
+                    continue;
+                }
+
+                String[] campos = linea.split(",", -1);
+
+                if (campos.length != 2) {
+                    throw new IOException(
+                            "Formato incorrecto en Paises.csv, línea "
+                                    + numeroLinea);
+                }
+
+                String pais = campos[0].trim();
+                String codigo = campos[1].trim().toUpperCase(
+                        Locale.ROOT);
+
+                if (pais.isEmpty()
+                        || !codigo.matches("[A-Z]{2}")) {
+                    throw new IOException(
+                            "País o código ISO incorrecto en la línea "
+                                    + numeroLinea);
+                }
+
+                String clave = normalizar(pais);
+
+                if (mapa.putIfAbsent(clave, codigo) != null) {
+                    throw new IOException(
+                            "País duplicado en Paises.csv: " + pais);
+                }
+            }
+        }
+
+        return mapa;
+    }
+
+    private String normalizar(String texto) {
+        return Normalizer.normalize(
+                        texto.trim().toLowerCase(Locale.ROOT),
+                        Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
     }
 
     private void escribirCabecera(BufferedWriter escritor)

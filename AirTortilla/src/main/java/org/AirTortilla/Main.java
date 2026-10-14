@@ -34,12 +34,10 @@ public class Main {
                 try {
                     switch (opcion) {
                         case 1 -> {
-                            List<Reserva> reservas =
-                                    gestor.leerReservas();
+                            List<Reserva> reservas = gestor.leerReservas();
 
                             if (reservas.isEmpty()) {
-                                System.out.println(
-                                        "No hay reservas.");
+                                System.out.println("No hay reservas.");
                             } else {
                                 for (Reserva reserva : reservas) {
                                     System.out.println(reserva);
@@ -51,35 +49,27 @@ public class Main {
                             System.out.print("Introduce el destino: ");
                             String destino = teclado.nextLine().trim();
 
-                            List<Reserva> reservas =
-                                    gestor.leerReservas();
+                            List<Reserva> reservas = gestor.leerReservas();
 
-                            gestor.consultarPorDestino(
-                                    reservas, destino);
+                            gestor.consultarPorDestino(reservas, destino);
                         }
 
-                        case 3 ->
-                                gestor.generarTodosLosFicheros();
+                        case 3 -> gestor.generarTodosLosFicheros();
 
-                        case 4 ->
-                                gestor.generarLineaALinea(teclado);
+                        case 4 -> gestor.generarLineaALinea(teclado);
 
-                        case 5 ->
-                                System.out.println(
-                                        "Cerrando AirTortilla...");
+                        case 5 -> System.out.println("Cerrando AirTortilla...");
 
                         case 0 -> {
                             // Entrada no válida.
                         }
 
                         default ->
-                                System.out.println(
-                                        "Opción no válida.");
+                                System.out.println("Opción no válida.");
                     }
 
                 } catch (IOException | IllegalArgumentException e) {
-                    System.out.println(
-                            "Error: " + e.getMessage());
+                    System.out.println("Error: " + e.getMessage());
                 }
 
             } while (opcion != 5);

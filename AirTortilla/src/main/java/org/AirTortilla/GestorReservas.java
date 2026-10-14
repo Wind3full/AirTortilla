@@ -75,18 +75,14 @@ public class GestorReservas {
         String fecha = campos[3].trim();
         String localizador = campos[4].trim();
 
-        if (destino.isEmpty() || origen.isEmpty()
-                || nombre.isEmpty() || fecha.isEmpty()
-                || localizador.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Hay campos obligatorios vacíos");
+        if (destino.isEmpty() || origen.isEmpty() || nombre.isEmpty() || fecha.isEmpty() || localizador.isEmpty()) {
+            throw new IllegalArgumentException("Hay campos obligatorios vacíos");
         }
 
         try {
             LocalDate.parse(fecha, formatoFecha);
         } catch (Exception e) {
-            throw new IllegalArgumentException(
-                    "La fecha debe tener formato YYYY-MM-DD");
+            throw new IllegalArgumentException("La fecha debe tener formato YYYY-MM-DD");
         }
 
         return new Reserva(destino, origen, nombre, fecha, localizador);
@@ -105,8 +101,7 @@ public class GestorReservas {
         }
 
         if (!encontrado) {
-            System.out.println(
-                    "No se encontraron reservas para ese destino.");
+            System.out.println("No se encontraron reservas para ese destino.");
         }
     }
 
@@ -120,18 +115,14 @@ public class GestorReservas {
         for (Reserva reserva : reservas) {
             String nombreArchivo = obtenerNombreArchivo(reserva);
 
-            grupos.computeIfAbsent(
-                    nombreArchivo, clave -> new ArrayList<>()
-            ).add(reserva);
+            grupos.computeIfAbsent(nombreArchivo, clave -> new ArrayList<>()).add(reserva);
         }
 
-        for (Map.Entry<String, List<Reserva>> grupo
-                : grupos.entrySet()) {
+        for (Map.Entry<String, List<Reserva>> grupo : grupos.entrySet()) {
 
             Path archivo = carpetaSalida.resolve(grupo.getKey());
 
-            try (BufferedWriter escritor = Files.newBufferedWriter(
-                    archivo, StandardCharsets.UTF_8)) {
+            try (BufferedWriter escritor = Files.newBufferedWriter(archivo, StandardCharsets.UTF_8)) {
 
                 escribirCabecera(escritor);
 
@@ -143,9 +134,7 @@ public class GestorReservas {
             System.out.println("Generado: " + archivo);
         }
 
-        System.out.println(
-                "Proceso finalizado. Ficheros generados: "
-                        + grupos.size());
+        System.out.println("Proceso finalizado. Ficheros generados: " + grupos.size());
     }
 
     public void generarLineaALinea(Scanner teclado) throws IOException {
@@ -154,8 +143,7 @@ public class GestorReservas {
 
         int procesadas = 0;
 
-        try (BufferedReader lector = Files.newBufferedReader(
-                archivoEntrada, StandardCharsets.UTF_8)) {
+        try (BufferedReader lector = Files.newBufferedReader(archivoEntrada, StandardCharsets.UTF_8)) {
 
             String linea;
             int numeroLinea = 0;
@@ -173,9 +161,7 @@ public class GestorReservas {
                 try {
                     reserva = convertirReserva(linea);
                 } catch (IllegalArgumentException e) {
-                    throw new IOException(
-                            "Error en la línea " + numeroLinea
-                                    + ": " + e.getMessage(), e);
+                    throw new IOException("Error en la línea " + numeroLinea + ": " + e.getMessage(), e);
                 }
 
                 // Mostrar la reserva antes de guardarla
@@ -184,13 +170,11 @@ public class GestorReservas {
                 System.out.println("================================");
                 System.out.println(reserva);
 
-                System.out.println(
-                        "\nPulsa ENTER para guardar esta reserva...");
+                System.out.println("\nPulsa ENTER para guardar esta reserva...");
                 teclado.nextLine();
 
                 // Obtener el fichero correspondiente
-                Path archivo = carpetaSalida.resolve(
-                        obtenerNombreArchivo(reserva));
+                Path archivo = carpetaSalida.resolve(obtenerNombreArchivo(reserva));
 
                 boolean existe = Files.exists(archivo);
 
@@ -222,8 +206,7 @@ public class GestorReservas {
     private String obtenerNombreArchivo(Reserva reserva) throws IOException{
         String codigo = obtenerCodigoPais(reserva.getDestino());
 
-        LocalDate fecha = LocalDate.parse(
-                reserva.getFechaReserva(), formatoFecha);
+        LocalDate fecha = LocalDate.parse(reserva.getFechaReserva(), formatoFecha);
 
         return String.format(
                 "AirTortilla_%s_%04d_%02d_%02d.csv",
@@ -245,9 +228,7 @@ public class GestorReservas {
         String codigo = paises.get(nombreNormalizado);
 
         if (codigo == null) {
-            throw new IllegalArgumentException(
-                    "No existe un código ISO para el destino: "
-                            + destino);
+            throw new IllegalArgumentException("No existe un código ISO para el destino: " + destino);
         }
 
         return codigo;
@@ -257,8 +238,7 @@ public class GestorReservas {
 
         Map<String, String> mapa = new HashMap<>();
 
-        try (BufferedReader lector = Files.newBufferedReader(
-                archivoPaises, StandardCharsets.UTF_8)) {
+        try (BufferedReader lector = Files.newBufferedReader(archivoPaises, StandardCharsets.UTF_8)) {
 
             String linea;
             int numeroLinea = 0;
@@ -274,27 +254,21 @@ public class GestorReservas {
                 String[] campos = linea.split(",", -1);
 
                 if (campos.length != 2) {
-                    throw new IOException(
-                            "Formato incorrecto en Paises.csv, línea "
-                                    + numeroLinea);
+                    throw new IOException("Formato incorrecto en Paises.csv, línea " + numeroLinea);
                 }
 
                 String pais = campos[0].trim();
-                String codigo = campos[1].trim().toUpperCase(
-                        Locale.ROOT);
+                String codigo = campos[1].trim().toUpperCase(Locale.ROOT);
 
                 if (pais.isEmpty()
                         || !codigo.matches("[A-Z]{2}")) {
-                    throw new IOException(
-                            "País o código ISO incorrecto en la línea "
-                                    + numeroLinea);
+                    throw new IOException("País o código ISO incorrecto en la línea " + numeroLinea);
                 }
 
                 String clave = normalizar(pais);
 
                 if (mapa.putIfAbsent(clave, codigo) != null) {
-                    throw new IOException(
-                            "País duplicado en Paises.csv: " + pais);
+                    throw new IOException("País duplicado en Paises.csv: " + pais);
                 }
             }
         }
@@ -338,14 +312,12 @@ public class GestorReservas {
             archivos
                     .filter(Files::isRegularFile)
                     .filter(archivo ->
-                            archivo.getFileName().toString()
-                                    .endsWith(".csv"))
+                            archivo.getFileName().toString().endsWith(".csv"))
                     .forEach(archivo -> {
                         try {
                             Files.delete(archivo);
                         } catch (IOException e) {
-                            throw new RuntimeException(
-                                    "No se pudo borrar " + archivo, e);
+                            throw new RuntimeException("No se pudo borrar " + archivo, e);
                         }
                     });
         }

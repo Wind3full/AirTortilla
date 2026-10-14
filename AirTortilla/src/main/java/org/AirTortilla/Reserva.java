@@ -7,9 +7,7 @@ public class Reserva {
     private String fechaReserva;
     private String localizador;
 
-    public Reserva(String destino, String origen,
-                   String nombrePasajero, String fechaReserva,
-                   String localizador) {
+    public Reserva(String destino, String origen, String nombrePasajero, String fechaReserva, String localizador) {
         this.destino = destino;
         this.origen = origen;
         this.nombrePasajero = nombrePasajero;

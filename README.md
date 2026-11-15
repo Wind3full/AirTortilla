@@ -278,3 +278,86 @@ En las modalidades de generación, los archivos CSV anteriores de la carpeta `Sa
 AirTortilla permite gestionar las reservas mediante ficheros CSV y distribuirlas automáticamente según el país de destino y la fecha de realización de la reserva.
 
 La aplicación dispone de una interfaz de terminal para consultar los datos, generar todos los archivos o procesar las reservas individualmente. El uso de localizadores únicos permite distinguir reservas coincidentes, mientras que el fichero `Paises.csv` facilita la incorporación de nuevos destinos sin modificar el código fuente.
+
+---
+# Segunda Entrega
+---
+## 11. Nueva versión web con base de datos
+
+La nueva iteración añade una aplicación web sencilla. El backend usa Java 21, Spring Boot y MySQL; el front utiliza HTML, CSS y JavaScript nativo.
+
+### Arranque con Docker
+
+Requisitos: Docker Desktop con Docker Compose y los ficheros `res/Reservas.csv` y `res/Paises.csv`.
+
+1. Copia `.env.example` a `.env` y cambia las contraseñas de base de datos y administrador.
+2. Desde la carpeta raíz del proyecto, ejecuta `docker compose up --build`.
+3. Abre [http://localhost:8080](http://localhost:8080) e inicia sesión con `ADMIN_USERNAME` y `ADMIN_PASSWORD`.
+
+MySQL guarda los datos en el volumen `mysql_data`. La primera vez que arranca la aplicación importa los dos CSV si las tablas de países y reservas están vacías. Los siguientes arranques no vuelven a importarlos. Para repetir la importación desde cero, elimina el volumen con `docker compose down -v` (esto borra los datos guardados en la base de datos).
+
+Para crear de nuevo el esquema tendrás que recrear la base de datos con `docker compose down -v` y después `docker compose up --build`. Esto elimina los datos del volumen; las reservas y países originales volverán a importarse desde los CSV.
+
+### Funciones web
+
+- Inicio y cierre de sesión.
+- Tras iniciar sesión aparece un menú principal con botones que llevan a páginas independientes para ver reservas, filtrar por destino, generar CSV y añadir registros. La tabla no se carga en la página de inicio.
+- Listado de reservas y consulta por destino.
+- Alta de reservas con destino existente y localizador único.
+- Descarga de un ZIP con los CSV agrupados por código ISO del destino y fecha de reserva.
+- Alta de usuarios con rol de empleado o administrador. Solo administradores pueden crear usuarios y consultar la auditoría.
+- Auditoría de altas de reservas y usuarios con usuario responsable, acción, identificador afectado y fecha.
+
+La interfaz está servida por el mismo backend para simplificar el despliegue.
+
+
+### Migración de CSV
+
+Los CSV de entrada se montan en el contenedor como solo lectura en `/data/csv`. La importación inicial conserva destino, origen, nombre del pasajero, fecha y localizador; el destino se relaciona con la tabla de países. Los ficheros deben usar la cabecera y el formato que ya utiliza el proyecto. La aplicación falla al importar una fila inválida, en lugar de iniciar con una migración parcial.
+
+### Ejecución local
+
+Con MySQL disponible y Java 21 y Maven instalados:
+
+```powershell
+$env:SPRING_DATASOURCE_URL = "jdbc:mysql://localhost:3307/airtortilla?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+$env:SPRING_DATASOURCE_USERNAME = "airtortilla"
+$env:SPRING_DATASOURCE_PASSWORD = "<contraseña de la base de datos>"
+$env:ADMIN_USERNAME = "admin"
+$env:ADMIN_PASSWORD = "<contraseña del administrador>"
+$env:CSV_DIR = "../res"
+cd AirTortilla
+mvn spring-boot:run
+```
+
+El administrador inicial solo se crea si `ADMIN_USERNAME` y `ADMIN_PASSWORD` están configurados y el nombre todavía no existe.
+
+### API principal
+
+- `POST /api/auth/login`, `GET /api/auth/me`, `POST /api/auth/logout`
+- `GET /api/reservas` y `GET /api/reservas?destino=Francia`
+- `POST /api/reservas`
+- `GET /api/reservas/csv`
+- `POST /api/users` (administrador)
+- `GET /api/audit` (administrador)
+
+Las reservas nuevas requieren `destino`, `origen`, `nombrePasajero`, `fechaReserva` (`YYYY-MM-DD`) y `localizador`. Las cuentas nuevas requieren `username`, `password` (mínimo 8 caracteres) y `role` (`EMPLEADO` o `ADMINISTRADOR`).
+
+## 12. Archivos del front y estructura de MySQL
+
+### ¿Por qué HTML, CSS y JavaScript están dentro del proyecto Java?
+
+El front está en `AirTortilla/src/main/resources/static`. Spring Boot publica automáticamente esos archivos estáticos y la API bajo el mismo servidor y puerto. Así se puede arrancar el front y el backend juntos en Docker y el navegador puede llamar a la API sin configurar otro servidor web ni CORS. Si el front creciera o necesitara herramientas de compilación propias, podría separarse a otro proyecto; para este front básico, mantenerlo junto al backend simplifica el despliegue.
+
+### Scripts SQL
+
+En `database/01_schema.sql` está el esquema explícito de MySQL: `paises`, `reservas`, `usuarios` y `auditoria`, con claves primarias, relaciones y restricciones de unicidad. `database/02_import_csv.sql` carga los países y las reservas desde los CSV usando `LOAD DATA LOCAL INFILE`.
+
+Al iniciar la aplicación, Hibernate crea o actualiza las tablas y `InitialData` importa los CSV automáticamente si países y reservas están vacíos. Para el uso habitual con Docker no hace falta ejecutar los scripts SQL. El script de importación es una alternativa manual.
+
+### Ver las tablas con MySQL Workbench
+
+1. Con la aplicación levantada, crea una conexión MySQL en Workbench con host `127.0.0.1`, puerto `3307`, usuario `airtortilla` y la contraseña `DB_PASSWORD` configurada en `.env`.
+2. Selecciona el esquema `airtortilla` y expande **Tables** para ver sus tablas.
+3. Haz clic derecho en una tabla y elige **Select Rows - Limit 1000** para ver los datos. Para ver columnas y tipos, usa **Table Inspector** o ejecuta `DESCRIBE reservas;` en una pestaña SQL.
+

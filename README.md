@@ -1,4 +1,4 @@
-# AirTortilla - Gestión de reservas
+﻿# AirTortilla - Gestión de reservas
 
 ## 1. Descripción del proyecto y diagrama
 
@@ -360,4 +360,3 @@ Al iniciar la aplicación, Hibernate crea o actualiza las tablas y `InitialData`
 1. Con la aplicación levantada, crea una conexión MySQL en Workbench con host `127.0.0.1`, puerto `3307`, usuario `airtortilla` y la contraseña `DB_PASSWORD` configurada en `.env`.
 2. Selecciona el esquema `airtortilla` y expande **Tables** para ver sus tablas.
 3. Haz clic derecho en una tabla y elige **Select Rows - Limit 1000** para ver los datos. Para ver columnas y tipos, usa **Table Inspector** o ejecuta `DESCRIBE reservas;` en una pestaña SQL.
-

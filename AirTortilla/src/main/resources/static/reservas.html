@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AirTortilla · Reservas</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-page="private">
+  <div id="app-header"></div>
+
+  <main class="container">
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <h2>Todas las reservas</h2>
+          <p>Registros almacenados en la base de datos.</p>
+        </div>
+        <button id="reload-reservations" class="secondary">Actualizar</button>
+      </div>
+
+      <p id="page-message" class="message" role="status"></p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Localizador</th>
+              <th>Pasajero</th>
+              <th>Origen</th>
+              <th>Destino</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody id="reservations"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

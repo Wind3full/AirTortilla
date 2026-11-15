@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AirTortilla · Administración</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-page="private">
+  <div id="app-header"></div>
+
+  <main class="container">
+    <section class="panel">
+      <h2>Crear usuario</h2>
+      <form id="user-form" class="form-grid">
+        <label>
+          Usuario
+          <input name="username" required>
+        </label>
+        <label>
+          Contraseña
+          <input name="password" type="password" minlength="8" required>
+        </label>
+        <label>
+          Rol
+          <select name="role">
+            <option value="EMPLEADO">Empleado</option>
+            <option value="ADMINISTRADOR">Administrador</option>
+          </select>
+        </label>
+        <div class="form-actions">
+          <button>Crear usuario</button>
+        </div>
+      </form>
+      <p id="user-message" class="message" role="status"></p>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <h2>Auditoría</h2>
+          <p>Altas de usuarios y reservas.</p>
+        </div>
+        <button id="load-audit" class="secondary">Cargar trazabilidad</button>
+      </div>
+      <ul id="audit-list" class="audit-list"></ul>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

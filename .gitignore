@@ -1,9 +1,13 @@
-*.csv
+/salida/*.csv
+/AirTortilla/Salidas/*.csv
+/res/*.csv
+
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 .kotlin
+.env
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

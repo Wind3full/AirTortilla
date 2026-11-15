@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AirTortilla · Inicio</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-page="private">
+  <div id="app-header"></div>
+
+  <main class="container">
+    <section class="welcome">
+      <h2>Menú principal</h2>
+      <p>Elige qué quieres hacer.</p>
+    </section>
+
+    <nav class="page-grid" aria-label="Operaciones">
+      <a class="page-card" href="/reservas.html">
+        <span class="card-icon">▤</span>
+        <strong>Ver registros</strong>
+        <span>Consultar todas las reservas.</span>
+      </a>
+      <a class="page-card" href="/consultar.html">
+        <span class="card-icon">⌕</span>
+        <strong>Consultar por destino</strong>
+        <span>Filtrar las reservas por país.</span>
+      </a>
+      <a class="page-card" href="/csv.html">
+        <span class="card-icon">⇩</span>
+        <strong>Generar ficheros CSV</strong>
+        <span>Descargar los ficheros agrupados.</span>
+      </a>
+      <a class="page-card" href="/nueva-reserva.html">
+        <span class="card-icon">＋</span>
+        <strong>Añadir registro</strong>
+        <span>Dar de alta una reserva.</span>
+      </a>
+      <a class="page-card admin-only" href="/admin.html" hidden>
+        <span class="card-icon">⚙</span>
+        <strong>Administración</strong>
+        <span>Crear usuarios y consultar auditoría.</span>
+      </a>
+    </nav>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AirTortilla · Iniciar sesión</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-page="login">
+  <main class="container narrow">
+    <header class="brand">
+      <h1>AirTortilla</h1>
+      <p>Gestión de reservas</p>
+    </header>
+
+    <section class="panel">
+      <h2>Iniciar sesión</h2>
+      <form id="login-form" class="form-stack">
+        <label>
+          Usuario
+          <input name="username" required autocomplete="username">
+        </label>
+        <label>
+          Contraseña
+          <input name="password" type="password" required autocomplete="current-password">
+        </label>
+        <button>Entrar</button>
+        <p id="login-message" class="message" role="status"></p>
+      </form>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

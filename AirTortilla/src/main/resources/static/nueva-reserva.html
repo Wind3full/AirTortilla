@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AirTortilla · Añadir reserva</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-page="private">
+  <div id="app-header"></div>
+
+  <main class="container">
+    <section class="panel">
+      <h2>Añadir reserva</h2>
+      <form id="reservation-form" class="form-grid">
+        <label>
+          Destino
+          <input name="destino" required>
+        </label>
+        <label>
+          Origen
+          <input name="origen" required>
+        </label>
+        <label>
+          Nombre del pasajero
+          <input name="nombrePasajero" required>
+        </label>
+        <label>
+          Fecha de reserva
+          <input name="fechaReserva" type="date" required>
+        </label>
+        <label>
+          Localizador
+          <input name="localizador" required>
+        </label>
+        <div class="form-actions">
+          <button>Guardar reserva</button>
+        </div>
+      </form>
+      <p id="page-message" class="message" role="status"></p>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

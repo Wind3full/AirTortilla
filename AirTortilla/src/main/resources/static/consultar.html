@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AirTortilla · Consultar por destino</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-page="private">
+  <div id="app-header"></div>
+
+  <main class="container">
+    <section class="panel">
+      <h2>Consultar por destino</h2>
+      <form id="filter-form" class="inline-form">
+        <label>
+          País de destino
+          <input name="destino" placeholder="Ej. Francia" required>
+        </label>
+        <button>Buscar reservas</button>
+      </form>
+
+      <p id="page-message" class="message" role="status"></p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Localizador</th>
+              <th>Pasajero</th>
+              <th>Origen</th>
+              <th>Destino</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody id="reservations"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
